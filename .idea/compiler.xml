@@ -8,8 +8,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="gmall-common-util" />
         <module name="demo" />
+        <module name="gmall-manage-service" />
         <module name="gmall-user" />
         <module name="gmall-user-web" />
+        <module name="gmall-manage-web" />
         <module name="gmall-web-util" />
         <module name="gmall-service-util" />
         <module name="gmall-user-service" />
@@ -19,6 +21,8 @@
       <module name="demo" target="1.8" />
       <module name="gmall-api" target="1.5" />
       <module name="gmall-common-util" target="1.8" />
+      <module name="gmall-manage-service" target="1.8" />
+      <module name="gmall-manage-web" target="1.8" />
       <module name="gmall-parent" target="1.8" />
       <module name="gmall-service-util" target="1.8" />
       <module name="gmall-user" target="1.8" />
@@ -31,6 +35,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="demo" options="-parameters" />
       <module name="gmall-common-util" options="" />
+      <module name="gmall-manage-service" options="" />
+      <module name="gmall-manage-web" options="" />
       <module name="gmall-service-util" options="" />
       <module name="gmall-user" options="" />
       <module name="gmall-user-service" options="" />
