@@ -2,5 +2,12 @@
 <project version="4">
   <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/demo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmall-common-util" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmall-parent" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmall-service-util" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmall-user" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmall-user-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmall-user-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmall-web-util" charset="UTF-8" />
   </component>
 </project>

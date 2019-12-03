@@ -7,13 +7,14 @@
     <groupId>com.atguigu.gmall</groupId>
     <artifactId>gmall-api</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <dependencies>
         <!-- 通用mapper -->
         <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper-spring-boot-starter</artifactId>
-            <version>2.1.1</version>
+            <version>1.2.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
