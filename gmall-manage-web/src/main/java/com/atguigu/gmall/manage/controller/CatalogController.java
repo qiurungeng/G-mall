@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @CrossOrigin
-public class ManageController {
+public class CatalogController {
 
     @Reference
     CatalogService catalogService;
