@@ -66,4 +66,27 @@ public class SpuServiceImpl implements SpuService {
             }
         }
     }
+
+    @Override
+    public List<PmsProductSaleAttr> spuSaleAttrList(String spuId) {
+        PmsProductSaleAttr saleAttr=new PmsProductSaleAttr();
+        saleAttr.setProductId(spuId);
+        List<PmsProductSaleAttr> pmsProductSaleAttrs = pmsProductSaleAttrMapper.select(saleAttr);
+        for (PmsProductSaleAttr pmsProductSaleAttr : pmsProductSaleAttrs) {
+            PmsProductSaleAttrValue pmsProductSaleAttrValue=new PmsProductSaleAttrValue();
+            pmsProductSaleAttrValue.setSaleAttrId(pmsProductSaleAttr.getSaleAttrId());//销售属性id用的是系统字典表中的id，不是销售属性表中的主键
+            pmsProductSaleAttrValue.setProductId(spuId);
+            List<PmsProductSaleAttrValue> pmsProductSaleAttrValues = pmsProductSaleAttrValueMapper.select(pmsProductSaleAttrValue);
+            pmsProductSaleAttr.setSpuSaleAttrValueList(pmsProductSaleAttrValues);
+        }
+        return pmsProductSaleAttrs;
+    }
+
+    @Override
+    public List<PmsProductImage> spuImageList(String spuId) {
+        PmsProductImage pmsProductImage=new PmsProductImage();
+        pmsProductImage.setProductId(spuId);
+        List<PmsProductImage> pmsProductImages = pmsProductImageMapper.select(pmsProductImage);
+        return pmsProductImages;
+    }
 }
