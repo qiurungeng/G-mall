@@ -12,7 +12,7 @@
 	<body>
 		<div id="max">
 		<header>
-
+		<input type="hidden" th:value="${skuSaleAttrHashJsonStr}" id="valuesSku" />
 					<div class="min">
 						<ul class="header_ul_left">
 							<li class="glyphicon glyphicon-home"> <a href="shouye.html" class="aa">首页</a></li>
@@ -1020,36 +1020,19 @@
         }
 
         function switchSkuId() {
-            // 被选中属性
-            var checkDivs = $(".redborder div");
-            var valueIds="";
-            // 拼接成属性值串
-            for (var i = 0; i < checkDivs.length; i++) {
-                var saleAttrValueDiv = checkDivs.eq(i);
-                if(i>0){
-                    valueIds= valueIds+"|";
-                }
-                valueIds=valueIds+saleAttrValueDiv.attr("value");
-            }
-            //页面上的hashjson
-            var valuesSku = $("#valuesSku").attr("value");
-            var valuesSkuJson=JSON.parse(valuesSku);
-
-            // 看看hash有没有
-            var skuId= valuesSkuJson[valueIds];
-            // 当前sku
-            var skuIdSelf=$("#skuId").val();
-
-            // 判断是否跳转
-            if(skuId){
-                if(skuId==skuIdSelf){
-                    $("#cartBtn").attr("class","box-btns-two");
-                }else{
-                    window.location.href="/"+skuId+".html";
-                }
-            }else{
-                $("#cartBtn").attr("class","box-btns-two-off");
-            }
+			const jsonStr = $("#valuesSku").val();
+			var saleAttrValueIds=$(".redborder div");
+			var k="";
+			$(saleAttrValueIds).each(function (i, saleAttrValueId) {
+				k+=$(saleAttrValueId).attr("value")+"|";
+			})
+			// alert(k);
+			var json=JSON.parse(jsonStr);
+			var skuId=json[k];
+			// alert(skuId);
+			if (skuId){
+				window.location.href="http://127.0.0.1:8082/"+skuId+".html";
+			}
         }
 	</script>
 
