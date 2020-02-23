@@ -11,3 +11,6 @@ gmall-manage-web用户服务的web层端口：8081
 
 ~~gmall-item-service前台商品详情服务：8072~~   
 gmall-item-web前台商品详情展示：8082
+
+gmall-search-web 搜索服务的前台 8083   
+gmall-search-service 搜索服务的后台 8074
