@@ -90,21 +90,19 @@ public class AttrServiceImpl implements AttrService {
     public List<PmsBaseAttrValue> getAttrValueList(String attrId) {
         Example example=new Example(PmsBaseAttrValue.class);
         example.createCriteria().andEqualTo("attrId",attrId);
-        List<PmsBaseAttrValue> pmsBaseAttrValueList = pmsBaseAttrValueMapper.selectByExample(example);
-        return pmsBaseAttrValueList;
+        return pmsBaseAttrValueMapper.selectByExample(example);
     }
 
     @Override
     public List<PmsBaseSaleAttr> baseSaleAttrList() {
-        List<PmsBaseSaleAttr> pmsBaseSaleAttrs = pmsBaseSaleAttrMapper.selectAll();
-        return pmsBaseSaleAttrs;
+        return pmsBaseSaleAttrMapper.selectAll();
     }
 
     @Override
     public List<PmsBaseAttrInfo> getAttrValueListByValueId(Set<String> valueIdSet) {
+        if (valueIdSet.isEmpty())return null;
         String valueIdStr=StringUtils.join(valueIdSet,",");     //eg: "41,45,46"
-        List<PmsBaseAttrInfo> pmsBaseAttrInfos=pmsBaseAttrInfoMapper.selectAttrValueListByValueId(valueIdStr);
-        return pmsBaseAttrInfos;
+        return pmsBaseAttrInfoMapper.selectAttrValueListByValueId(valueIdStr);
     }
 
 

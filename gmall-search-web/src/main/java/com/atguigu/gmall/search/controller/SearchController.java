@@ -75,7 +75,7 @@ public class SearchController {
 
         String keyword=pmsSearchParam.getKeyword();
         if (StringUtils.isNotBlank(keyword)){
-            modelMap.put("keyword",urlParam);
+            modelMap.put("keyword",keyword);
         }
 
         return "list";
