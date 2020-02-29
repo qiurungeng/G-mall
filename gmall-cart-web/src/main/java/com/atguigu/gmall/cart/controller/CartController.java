@@ -2,6 +2,7 @@ package com.atguigu.gmall.cart.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
+import com.atguigu.gmall.annotations.LoginRequired;
 import com.atguigu.gmall.bean.OmsCartItem;
 import com.atguigu.gmall.bean.PmsSkuInfo;
 import com.atguigu.gmall.service.CartService;
@@ -28,9 +29,20 @@ public class CartController {
     @Reference
     CartService cartService;
 
+
+    @RequestMapping("toTrade")
+    @LoginRequired
+    public String toTrade(HttpServletRequest request,ModelMap modelMap){
+        String memberId = (String)request.getAttribute("memberId");
+        String nickname = (String)request.getAttribute("nickname");
+        return "toTradeTest";
+    }
+
     @RequestMapping("checkCart")
-    public String checkCart(String isChecked,String skuId,ModelMap modelMap){
-        String memberId="1";
+    @LoginRequired(loginSuccessNeeded = false)
+    public String checkCart(String isChecked,String skuId,HttpServletRequest request,ModelMap modelMap){
+        String memberId = (String)request.getAttribute("memberId");
+        String nickname = (String)request.getAttribute("nickname");
         //调用服务，修改状态
         OmsCartItem omsCartItem = new OmsCartItem();
         omsCartItem.setMemberId(memberId);
@@ -49,6 +61,7 @@ public class CartController {
     }
 
     @RequestMapping("cartList")
+    @LoginRequired(loginSuccessNeeded = false)
     public String cartList(HttpServletRequest request, ModelMap modelMap){
         List<OmsCartItem> omsCartItems = null;
         String userId="1";
@@ -73,6 +86,7 @@ public class CartController {
     }
 
     @RequestMapping("addToCart")
+    @LoginRequired(loginSuccessNeeded = false)
     public String addToCart(String skuId, int quantity, HttpServletRequest request, HttpServletResponse response){
         //调用商品服务查询商品信息
         PmsSkuInfo skuInfo = skuService.getSkuById(skuId);
@@ -98,6 +112,7 @@ public class CartController {
 
         //判断用户是否登录
         String memberId="1";
+        //request.getAttribute("memberId");
 
         if (StringUtils.isBlank(memberId)){
             //用户未登录
