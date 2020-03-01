@@ -13,19 +13,23 @@ public class UmsMember implements Serializable {
     private String         password;
     private String nickname;
     private String         phone;
-    private int status;
+    private Integer status;
     private Date createTime;
     private String icon;
-    private int         gender;
+    private Integer  gender;
     private Date birthday;
     private String        city;
     private String job;
     private String         personalizedSignature;
-    private int sourceType;
-    private int         integration;
-    private int growth;
-    private int         luckeyCount;
-    private int historyIntegration;
+    private Integer sourceType;
+    private Integer         integration;
+    private Integer growth;
+    private Integer         luckeyCount;
+    private Integer historyIntegration;
+
+    private Long sourceUid;
+    private String accessToken;
+    private String accessCode;
 
     public String getId() {
         return id;
@@ -75,11 +79,11 @@ public class UmsMember implements Serializable {
         this.phone = phone;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -99,11 +103,11 @@ public class UmsMember implements Serializable {
         this.icon = icon;
     }
 
-    public int getGender() {
+    public Integer getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 
@@ -139,43 +143,67 @@ public class UmsMember implements Serializable {
         this.personalizedSignature = personalizedSignature;
     }
 
-    public int getSourceType() {
+    public Integer getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(int sourceType) {
+    public void setSourceType(Integer sourceType) {
         this.sourceType = sourceType;
     }
 
-    public int getIntegration() {
+    public Integer getIntegration() {
         return integration;
     }
 
-    public void setIntegration(int integration) {
+    public void setIntegration(Integer integration) {
         this.integration = integration;
     }
 
-    public int getGrowth() {
+    public Integer getGrowth() {
         return growth;
     }
 
-    public void setGrowth(int growth) {
+    public void setGrowth(Integer growth) {
         this.growth = growth;
     }
 
-    public int getLuckeyCount() {
+    public Integer getLuckeyCount() {
         return luckeyCount;
     }
 
-    public void setLuckeyCount(int luckeyCount) {
+    public void setLuckeyCount(Integer luckeyCount) {
         this.luckeyCount = luckeyCount;
     }
 
-    public int getHistoryIntegration() {
+    public Integer getHistoryIntegration() {
         return historyIntegration;
     }
 
-    public void setHistoryIntegration(int historyIntegration) {
+    public void setHistoryIntegration(Integer historyIntegration) {
         this.historyIntegration = historyIntegration;
+    }
+
+    public Long getSourceUid() {
+        return sourceUid;
+    }
+
+    public void setSourceUid(Long sourceUid) {
+        this.sourceUid = sourceUid;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getAccessCode() {
+        return accessCode;
+    }
+
+    public void setAccessCode(String accessCode) {
+        this.accessCode = accessCode;
     }
 }

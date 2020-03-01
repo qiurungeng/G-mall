@@ -84,6 +84,29 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 添加社交登录用户信息
+     * @param umsMember 社交登录用户
+     */
+    @Override
+    public UmsMember loginOauthUser(UmsMember umsMember) {
+        UmsMember check=new UmsMember();
+        check.setSourceUid(umsMember.getSourceUid());
+        check.setSourceType(umsMember.getSourceType());
+        UmsMember exist = userMapper.selectOne(check);
+        if (exist==null){
+            //首次采用第三方平台账号登录
+            userMapper.insertSelective(umsMember);
+        }else {
+            //已有该第三方账号记录
+            Example example=new Example(UmsMember.class);
+            example.createCriteria().andEqualTo("sourceUid",umsMember.getSourceUid())
+                    .andEqualTo("sourceType",umsMember.getSourceType());
+            userMapper.updateByExampleSelective(umsMember,example);     //更新一下账号信息
+        }
+        return userMapper.selectOne(umsMember);     //返回完整的登录用户信息
+    }
+
+    /**
      * 通过数据库查找的方式登录
      * @param umsMember 登录用户信息，包含用户名密码
      * @return 成功登录用户的所有信息
