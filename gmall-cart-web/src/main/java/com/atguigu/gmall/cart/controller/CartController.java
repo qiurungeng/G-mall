@@ -30,13 +30,13 @@ public class CartController {
     CartService cartService;
 
 
-    @RequestMapping("toTrade")
-    @LoginRequired
-    public String toTrade(HttpServletRequest request,ModelMap modelMap){
-        String memberId = (String)request.getAttribute("memberId");
-        String nickname = (String)request.getAttribute("nickname");
-        return "toTradeTest";
-    }
+//    @RequestMapping("toTrade")
+//    @LoginRequired
+//    public String toTrade(HttpServletRequest request,ModelMap modelMap){
+//        String memberId = (String)request.getAttribute("memberId");
+//        String nickname = (String)request.getAttribute("nickname");
+//        return "toTradeTest";
+//    }
 
     @RequestMapping("checkCart")
     @LoginRequired(loginSuccessNeeded = false)
@@ -64,16 +64,18 @@ public class CartController {
     @LoginRequired(loginSuccessNeeded = false)
     public String cartList(HttpServletRequest request, ModelMap modelMap){
         List<OmsCartItem> omsCartItems = null;
-        String userId="1";
-        if (StringUtils.isNotBlank(userId)){
+        String memberId=(String) request.getAttribute("memberId");
+        String nickname=(String)request.getAttribute("nickname");
+
+        if (StringUtils.isNotBlank(memberId)){
             //已经登录,查询db
-            omsCartItems=cartService.cartList(userId);
+            omsCartItems=cartService.cartList(memberId);
         }else {
             //没有登录查询Cookie
             String cartListCookie = CookieUtil.getCookieValue(request, "cartListCookie", true);
             if (StringUtils.isNotBlank(cartListCookie)){
                 omsCartItems=JSON.parseArray(cartListCookie,OmsCartItem.class);
-            }
+            }else omsCartItems=new ArrayList<>();
         }
         //设置购物车单项总价，并计算选中商品总价
         assert omsCartItems != null;
@@ -111,8 +113,8 @@ public class CartController {
         omsCartItem.setIsChecked("1");
 
         //判断用户是否登录
-        String memberId="1";
-        //request.getAttribute("memberId");
+        String memberId = (String)request.getAttribute("memberId");
+        String nickname = (String)request.getAttribute("nickname");
 
         if (StringUtils.isBlank(memberId)){
             //用户未登录

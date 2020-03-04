@@ -106,6 +106,13 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectOne(umsMember);     //返回完整的登录用户信息
     }
 
+    @Override
+    public UmsMemberReceiveAddress getReceiveAddressById(String receiveAddressId) {
+        UmsMemberReceiveAddress address = new UmsMemberReceiveAddress();
+        address.setId(receiveAddressId);
+        return userReceiveAddressMapper.selectOne(address);
+    }
+
     /**
      * 通过数据库查找的方式登录
      * @param umsMember 登录用户信息，包含用户名密码

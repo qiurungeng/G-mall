@@ -87,4 +87,30 @@ public class CartServiceImpl implements CartService {
         //同步缓存
         flushCartCache(omsCartItem.getMemberId());
     }
+
+    /**
+     * 订单结算后，删除购物车中已结算的商品
+     * @param memberId 用户Id
+     */
+    @Override
+    public void delCart(String memberId) {
+        Jedis jedis = redisUtil.getJedis();
+        List<OmsCartItem> checkedList=getCheckedItems(memberId);
+        for (OmsCartItem omsCartItem : checkedList) {
+            //删除缓存
+            jedis.hdel("user:" + memberId + ":cart",omsCartItem.getProductSkuId());
+            //删除数据库记录
+            omsCartItemMapper.delete(omsCartItem);
+        }
+        jedis.close();
+    }
+
+    private List<OmsCartItem> getCheckedItems(String memberId){
+        List<OmsCartItem> checkedItems=new ArrayList<>();
+        List<OmsCartItem> omsCartItems = cartList(memberId);
+        for (OmsCartItem omsCartItem : omsCartItems) {
+            if (omsCartItem.getIsChecked().equals("1"))checkedItems.add(omsCartItem);
+        }
+        return checkedItems;
+    }
 }

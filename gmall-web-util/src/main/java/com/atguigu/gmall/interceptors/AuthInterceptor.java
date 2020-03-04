@@ -6,6 +6,7 @@ import com.atguigu.gmall.util.CookieUtil;
 import com.atguigu.gmall.util.HttpclientUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -14,11 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Component
+@CrossOrigin
 public class AuthInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //拦截代码:
-
         //判断被拦截请求所访问的方法的注解（是否是需要拦截的）
         HandlerMethod hm=(HandlerMethod)handler;
         LoginRequired methodAnnotation = hm.getMethodAnnotation(LoginRequired.class);
@@ -36,12 +37,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             token=newToekn;
         }
 
-        //进入拦截器的拦截方法
+        //是否必须登录
         boolean loginSuccessNeeded = methodAnnotation.loginSuccessNeeded(); //该请求是否必须成功登录
 
-
-
-        String verify = "";
+        String verify = "fail";
         Map verificationMap=null;
         //获得发起请求的客户端的ip
         String ip=request.getHeader("x-forwarded-for");     //通过nginx转发的客户端ip
@@ -68,31 +67,28 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                 response.sendRedirect("http://passport.gmall.com:8085/index?ReturnUrl="
                         +request.getRequestURL()+"&requestIP="+ip);
                 return false;
-            }else {
-                //验证通过，覆盖cookie中的token
-                //已登录，需要将token携带的用户信息写入
-                request.setAttribute("memberId",verificationMap.get("memberId"));
-                request.setAttribute("nicknam",verificationMap.get("nickname"));
-                //验证通过，覆盖cookie中的token
-                if (StringUtils.isNotBlank(token)){
-                    CookieUtil.setCookie(request,response,"oldToken",token,60*60*2,true);
-                }
             }
+            //已登录，需要将token携带的用户信息写入
+            request.setAttribute("memberId",verificationMap.get("memberId"));
+            request.setAttribute("nickname",verificationMap.get("nickname"));
+            //验证通过，覆盖cookie中的token
+            if (StringUtils.isNotBlank(token)){
+                CookieUtil.setCookie(request,response,"oldToken",token,60*60*2,true);
+            }
+
         }else {
             //没登录也能用，但必须验证
             if (verify.equals("success")){
                 //已登录，需要将token携带的用户信息写入
                 request.setAttribute("memberId",verificationMap.get("memberId"));
-                request.setAttribute("nicknam",verificationMap.get("nickname"));
+                request.setAttribute("nickname",verificationMap.get("nickname"));
                 //验证通过，覆盖cookie中的token
-
+                if(StringUtils.isNotBlank(token)){
                     CookieUtil.setCookie(request,response,"oldToken",token,60*60*2,true);
-
+                }
             }
         }
 
         return true;
     }
-
-
 }
