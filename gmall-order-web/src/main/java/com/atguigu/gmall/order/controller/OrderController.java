@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -40,11 +41,12 @@ public class OrderController {
 
     @RequestMapping("submitOrder")
     @LoginRequired
-    public String submitOrder(String receiveAddressId,BigDecimal totalAmount,String tradeCode,
-                              HttpServletRequest request,ModelMap modelMap){
+    public ModelAndView submitOrder(String receiveAddressId, BigDecimal totalAmount, String tradeCode,
+                                    HttpServletRequest request, ModelMap modelMap){
         String memberId = (String)request.getAttribute("memberId");
         String nickname = (String)request.getAttribute("nickname");
-        System.out.println(receiveAddressId+"|"+totalAmount);
+        ModelAndView mv=new ModelAndView("tradeFail");
+
         //检查交易码
         String success=orderService.checkTradeCode(memberId,tradeCode);
         //符合结算前提，制作结算订单
@@ -52,15 +54,13 @@ public class OrderController {
 
             //取出购物车结算项
             List<OmsCartItem> omsCartItems = cartService.cartList(memberId);
-            //验价格
+            //验价格(暂时未写验库存)
             for (OmsCartItem omsCartItem : omsCartItems) {
                 if (omsCartItem.getIsChecked().equals("1")){
                     boolean ok=skuService.checkPrice(omsCartItem.getProductSkuId(),omsCartItem.getPrice());
-                    if (!ok)return "tradeFail";
+                    if (!ok)return mv;
                 }
             }
-            //验库存，远程调用库存系统
-
 
             //根据用户id获得要购买的商品列表(购物车),和总价格，为确保结算数据为最新数据不能采用当前页面的数据！
             OmsOrder omsOrder=new OmsOrder();
@@ -98,16 +98,17 @@ public class OrderController {
             omsOrder.setStatus(0);  //订单状态：待付款
             omsOrder.setTotalAmount(totalAmount);
 
-
             //将订单和订单详情写入数据库
             orderService.saveOrder(omsOrder);
 
-            //删除购物车对应的商品
-
             //从定向到支付系统
-        }else return "tradeFail";
-
-        return null;
+            mv=new ModelAndView("redirect:http://payment.gmall.com:8087/");
+            mv.addObject("outTradeNo",outTradeNo);
+            mv.addObject("totalAmount",totalAmount);
+            return mv;
+        }else{
+            return mv;
+        }
     }
 
     @RequestMapping("toTrade")

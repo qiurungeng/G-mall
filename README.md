@@ -24,4 +24,6 @@ gmall-passport-web 用户认证中心 8085
 gmall-user-service 用户服务 8070
 
 gmall-order-web 订单前台 8086   
-gmall-order-service 订单服务 8076
+gmall-order-service 订单服务 8076   
+
+gmall-payment 支付服务 8087
