@@ -129,6 +129,7 @@ public class PaymentController {
         }
 
         //支付成功后的系统服务：订单服务、库存服务、物流
+        //调用mq发送支付成功消息
 
         return "finish";
     }

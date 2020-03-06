@@ -4,16 +4,21 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.atguigu.gmall.bean.OmsOrder;
 import com.atguigu.gmall.bean.OmsOrderItem;
+import com.atguigu.gmall.mq.ActiveMQUtil;
 import com.atguigu.gmall.order.mapper.OmsOrderItemMapper;
 import com.atguigu.gmall.order.mapper.OmsOrderMapper;
 import com.atguigu.gmall.service.CartService;
 import com.atguigu.gmall.service.OrderService;
 import com.atguigu.gmall.util.RedisUtil;
+import org.apache.activemq.command.ActiveMQMapMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
+import tk.mybatis.mapper.entity.Example;
 
+import javax.jms.*;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
     OmsOrderItemMapper omsOrderItemMapper;
     @Reference
     CartService cartService;
+    @Autowired
+    ActiveMQUtil activeMQUtil;
 
     @Override
     public String checkTradeCode(String memberId,String tradeCode) {
@@ -61,7 +68,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void saveOrder(OmsOrder omsOrder) {
-        Jedis jedis=null;
         //保存订单表
         omsOrderMapper.insertSelective(omsOrder);
         String orderId = omsOrder.getId();
@@ -81,6 +87,50 @@ public class OrderServiceImpl implements OrderService {
         OmsOrder omsOrder=new OmsOrder();
         omsOrder.setOrderSn(outTradeNo);
         return omsOrderMapper.selectOne(omsOrder);
+    }
+
+    @Override
+    public void orderPayUp(OmsOrder omsOrder) {
+        OmsOrder payUpOrder=new OmsOrder();
+        payUpOrder.setStatus(1);  //已付款，待发货
+        payUpOrder.setPaymentTime(new Date());
+        Example example=new Example(OmsOrder.class);
+        example.createCriteria().andEqualTo("orderSn",omsOrder.getOrderSn());
+
+
+        //发送一个订单已支付队列给库存消费
+        //支付成功后的系统服务->订单服务->库存服务->物流
+        Connection connection=null;
+        Session session=null;
+        try {
+            connection = activeMQUtil.getConnectionFactory().createConnection();
+            session = connection.createSession(true, Session.SESSION_TRANSACTED);//可回滚
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            omsOrderMapper.updateByExampleSelective(payUpOrder,example);
+            assert session != null;
+            Queue queue = session.createQueue("ORDER_PAY_QUEUE");
+            MessageProducer producer = session.createProducer(queue);
+            MapMessage mapMessage=new ActiveMQMapMessage(); //hash结构
+            mapMessage.setString("out_trade_no",omsOrder.getOrderSn());
+            producer.send(mapMessage);
+            session.commit();
+        } catch (JMSException e) {
+            try {
+                session.rollback();
+            } catch (JMSException ex) {
+                ex.printStackTrace();
+            }
+        }finally {
+            try {
+                if (connection!=null)connection.close();
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
