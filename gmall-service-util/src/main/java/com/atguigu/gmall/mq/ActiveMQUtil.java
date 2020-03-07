@@ -3,7 +3,7 @@ package com.atguigu.gmall.mq;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
 
-import javax.jms.ConnectionFactory;
+import javax.jms.*;
 
 public class ActiveMQUtil {
     PooledConnectionFactory pooledConnectionFactory=null;
@@ -24,4 +24,5 @@ public class ActiveMQUtil {
     public ConnectionFactory getConnectionFactory(){
         return pooledConnectionFactory;
     }
+
 }

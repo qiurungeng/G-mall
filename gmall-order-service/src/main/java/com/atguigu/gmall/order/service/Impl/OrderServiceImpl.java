@@ -2,6 +2,7 @@ package com.atguigu.gmall.order.service.Impl;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.bean.OmsOrder;
 import com.atguigu.gmall.bean.OmsOrderItem;
 import com.atguigu.gmall.mq.ActiveMQUtil;
@@ -11,6 +12,7 @@ import com.atguigu.gmall.service.CartService;
 import com.atguigu.gmall.service.OrderService;
 import com.atguigu.gmall.util.RedisUtil;
 import org.apache.activemq.command.ActiveMQMapMessage;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 import tk.mybatis.mapper.entity.Example;
@@ -114,9 +116,21 @@ public class OrderServiceImpl implements OrderService {
             assert session != null;
             Queue queue = session.createQueue("ORDER_PAY_QUEUE");
             MessageProducer producer = session.createProducer(queue);
-            MapMessage mapMessage=new ActiveMQMapMessage(); //hash结构
-            mapMessage.setString("out_trade_no",omsOrder.getOrderSn());
-            producer.send(mapMessage);
+//            MapMessage mapMessage=new ActiveMQMapMessage(); //hash结构
+//            mapMessage.setString("out_trade_no",omsOrder.getOrderSn());
+            TextMessage textMessage=new ActiveMQTextMessage();
+
+            //查询订单及订单对应的订单商品，转换为json字符串，存入ORDER_PAY_QUEUE消息队列
+            OmsOrder selectOrderParam=new OmsOrder();
+            selectOrderParam.setOrderSn(omsOrder.getOrderSn());
+            OmsOrder omsOrderResponse = omsOrderMapper.selectOne(selectOrderParam);
+            OmsOrderItem selectOrderItemParam=new OmsOrderItem();
+            selectOrderItemParam.setOrderSn(omsOrderResponse.getOrderSn());
+            List<OmsOrderItem> omsOrderItems = omsOrderItemMapper.select(selectOrderItemParam);
+            omsOrderResponse.setOmsOrderItems(omsOrderItems);
+            textMessage.setText(JSON.toJSONString(omsOrderResponse));
+            //发送订单消息
+            producer.send(textMessage);
             session.commit();
         } catch (JMSException e) {
             try {

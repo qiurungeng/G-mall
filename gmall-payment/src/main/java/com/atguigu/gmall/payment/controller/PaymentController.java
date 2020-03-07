@@ -96,6 +96,9 @@ public class PaymentController {
         paymentInfo.setSubject("一笔新的订单");
         paymentService.savePaymentInfo(paymentInfo);
 
+        //向消息中间件发送一个检查支付状态（支付服务消费）的延迟消息
+        paymentService.sendDelayPaymentResultCheckQueue(outTradeNo,5);
+
         //提交请求到支付宝
         return form;
     }
@@ -115,7 +118,7 @@ public class PaymentController {
         String subject = request.getParameter("subject");
         String call_back_content = request.getQueryString();
 
-        //通过支付宝的paramsMap进行验证，2.0版本的接口将paramMap参数去掉了，导致同步请求没法验签
+        //通过支付宝的paramsMap进行验证，2.0版本的接口将paramMap参数去掉了，导致同步请求没法验签，故本项目默认验签成功
         if (StringUtils.isNotBlank(sign)){
             //验签成功
             PaymentInfo paymentInfo=new PaymentInfo();
@@ -124,7 +127,7 @@ public class PaymentController {
             paymentInfo.setAlipayTradeNo(trade_no); //支付宝交易凭证号
             paymentInfo.setCallbackContent(call_back_content);  //回调请求字符串
             paymentInfo.setCallbackTime(new Date());
-            //更新用户的支付状态为已付款
+            //更新用户的支付状态为已付款，此方法内部已进行幂等性检查
             paymentService.payUp(paymentInfo);
         }
 

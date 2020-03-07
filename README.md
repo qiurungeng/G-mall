@@ -27,3 +27,6 @@ gmall-order-web 订单前台 8086
 gmall-order-service 订单服务 8076   
 
 gmall-payment 支付服务 8087
+
+除去以上服务外，另外引入gware-manage物流管理模块，用于与商城的支付功能对接，
+该模块可接收订单支付成功的队列消息（ORDER_PAY_QUEUE），并锁定仓库中库存。服务端口号：9001
