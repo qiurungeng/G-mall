@@ -1,6 +1,8 @@
 # G-mall
 Spring Boot电商学习项目，教程视屏：https://www.bilibili.com/video/av55643074
 
+点击查看：[完整笔记](https://github.com/qiurungeng/G-mall/blob/master/SpringBoot_尚硅谷谷粒商城.md)
+
 各服务对应的端口：
 
 ~~gmall-user用户服务：8080~~
